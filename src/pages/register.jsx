@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Navigate } from "react-router-dom";
-export function Login() {
-  const [User, setUser] = useState({ username: "", password: "" });
+export function Register() {
+  const [User, setUser] = useState({ username: "", password: ""  , email:""});
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("typing");
 
@@ -21,7 +21,7 @@ export function Login() {
     }
   }
 
-  function handleTextareaChange(e) {
+  function handleChange(e) {
     const { name, value } = e.target;
     setUser((prevUser) => ({
       ...prevUser,
@@ -38,7 +38,17 @@ export function Login() {
           name="username"
           id = "usr"
           value={User.username}
-          onChange={handleTextareaChange}
+          onChange={handleChange}
+          disabled={status === "submitting"}
+        />
+        <br />
+        <label htmlFor="mail">Email</label>
+        <input
+          type="text"
+          name="email"
+          id = "mail"
+          value={User.email}
+          onChange={handleChange}
           disabled={status === "submitting"}
         />
         <br />
@@ -48,7 +58,7 @@ export function Login() {
           name="password"
           id = "pass"
           value={User.password}
-          onChange={handleTextareaChange}
+          onChange={handleChange}
           disabled={status === "submitting"}
         />
         <br />
@@ -70,7 +80,7 @@ export function Login() {
 
 function submitForm(User) {
   // Pretend it's hitting the network.
-  console.log(User.username);
+  console.log(User.email);
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       let shouldError = false;

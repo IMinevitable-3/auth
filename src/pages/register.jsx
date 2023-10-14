@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { Navigate } from "react-router-dom";
+import axios from 'axios';
+const API_URL  = import.meta.env.REACT_APP_API +'api/user/register/' ;
+
 export function Register() {
   const [User, setUser] = useState({ username: "", password: ""  , email:""});
   const [error, setError] = useState(null);
@@ -12,13 +15,26 @@ export function Register() {
   async function handleSubmit(e) {
     e.preventDefault();
     setStatus("submitting");
+
+    const headers = {
+      'Content-Type': 'application/json',
+    };
     try {
-      await submitForm(User);
-      setStatus("success");
-    } catch (err) {
-      setStatus("typing");
-      setError(err);
+      await axios.post(API_URL , User)
+      .then(resp =>{
+        if( 'error' in resp.data ){
+          setError({ message: "choose another username" });
+          setStatus("typing");
+        }
+        else 
+        setStatus("success");
+    
+      })
+      
+    } catch (error) {
+      console.log("errror") 
     }
+
   }
 
   function handleChange(e) {
@@ -76,19 +92,4 @@ export function Register() {
       </form>
     </>
   );
-}
-
-function submitForm(User) {
-  // Pretend it's hitting the network.
-  console.log(User.email);
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      let shouldError = false;
-      if (shouldError) {
-        reject(new Error("Invalid User"));
-      } else {
-        resolve();
-      }
-    }, 1500);
-  });
 }

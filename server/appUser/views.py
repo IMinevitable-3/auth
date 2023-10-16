@@ -54,11 +54,11 @@ class LoginAPIView(APIView):
             try :
                 user = User.objects.get(username=serializer.validated_data["username"]) 
             except User.DoesNotExist:
-                return Response({"error":"username doesnt exist"} , status=status.HTTP_204_NO_CONTENT)
+                return Response({"error":"username doesnt exist"} , status=status.HTTP_200_OK)
             if check_password( serializer.validated_data["password"],user.password )  :
                 refresh = RefreshToken.for_user(user)
                 return Response({'refresh': str(refresh), 'access': str(refresh.access_token)}, status=status.HTTP_200_OK)
             else :
-                return Response({"error":"Invalid password"})
+                return Response({"error":"Invalid password"} ,status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     

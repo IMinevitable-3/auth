@@ -1,6 +1,10 @@
-import { useState } from "react";
+import { useState  } from "react";
 import { Navigate } from "react-router-dom";
+import {useAuth} from './useAuth'
+import axios from "./axios";
+const LOGIN_URL = 'api/user/login/'
 export function Login() {
+  const { setAuth }  = useAuth() 
   const [User, setUser] = useState({ username: "", password: "" });
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("typing");
@@ -12,12 +16,28 @@ export function Login() {
   async function handleSubmit(e) {
     e.preventDefault();
     setStatus("submitting");
+
+    const headers = {
+      'Content-Type': 'application/json',
+    };
     try {
-      await submitForm(User);
-      setStatus("success");
-    } catch (err) {
-      setStatus("typing");
-      setError(err);
+      await axios.post(LOGIN_URL , User)
+      .then(resp =>{
+        if( 'error' in resp.data ){
+          setError({ message: resp.data.error } ) ;
+          setStatus("typing");
+        }
+        else{
+          const accToken = resp.data.access 
+          const refToken = resp.data.refresh 
+          setAuth({accToken , refToken}) 
+          setStatus("success");
+        } 
+      })
+      
+    } catch (error) {
+      setStatus("typing") 
+      throw error 
     }
   }
 
@@ -68,17 +88,3 @@ export function Login() {
   );
 }
 
-function submitForm(User) {
-  // Pretend it's hitting the network.
-  console.log(User.username);
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      let shouldError = false;
-      if (shouldError) {
-        reject(new Error("Invalid User"));
-      } else {
-        resolve();
-      }
-    }, 1500);
-  });
-}

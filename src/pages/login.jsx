@@ -1,22 +1,21 @@
-import { useState  , useEffect , useRef  , useContext} from "react";
+import { useState  , useEffect , useRef  } from "react";
+import {Link , useNavigate ,useLocation} from "react-router-dom";
 import axios from "../api/axios";
-import { AuthContext } from "../context/AuthProvider";
+import useAuth from "../hooks/useAuth";
 const LOGIN_URL = 'api/user/login/'
 export function Login() {
-  const {setAuth} = useContext(AuthContext)
+  const {setAuth} = useAuth()
   const userRef = useRef() 
   const [User, setUser] = useState({ username: "", password: "" });
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("typing");
+  const navigate = useNavigate() 
+  const location = useLocation() 
+  const from = location.state?.from?.pathname || "/" ;
 
   useEffect(()=>{
     userRef.current.focus() ;
   },[]) 
-
-  if (status === "success") {
-    console.log("fuckinn got it ")
-    setStatus("typing")
-  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -37,7 +36,7 @@ export function Login() {
           const refToken = resp.data.refresh 
           setAuth({User , accToken , refToken})
           console.log(accToken)
-          setStatus("success");
+          navigate(from,{replace:true}) 
         } 
       })
       

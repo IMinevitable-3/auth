@@ -1,15 +1,20 @@
 import { useState  } from "react";
+import {Link , useNavigate ,useLocation} from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+
 import axios from '../api/axios';
 const API_URL  = 'api/user/register/' ;
 
 export function Register() {
+  const {setAuth} = useAuth()
+  const navigate = useNavigate() 
+  const location = useLocation() 
+  const from = location.state?.from?.pathname || "/" ;
+
   const [User, setUser] = useState({ username: "", password: ""  , email:""});
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("typing");
 
-  if (status === "success") {
-    console.log("success") 
-  }
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -27,7 +32,11 @@ export function Register() {
         }
         else {
           console.log(resp.data) 
-          setStatus("success");
+          const accToken = resp.data.access 
+          const refToken = resp.data.refresh 
+          setAuth({User , accToken , refToken})
+          console.log(User) 
+          navigate(from , {replace:true}) 
         }
     
       })

@@ -1,7 +1,6 @@
-import { useState } from "react";
-import { Navigate } from "react-router-dom";
-import axios from 'axios';
-const API_URL  = import.meta.env.REACT_APP_API +'api/user/register/' ;
+import { useState  } from "react";
+import axios from '../api/axios';
+const API_URL  = 'api/user/register/' ;
 
 export function Register() {
   const [User, setUser] = useState({ username: "", password: ""  , email:""});
@@ -9,11 +8,11 @@ export function Register() {
   const [status, setStatus] = useState("typing");
 
   if (status === "success") {
-    return <Navigate to="/dashboard" />;
+    console.log("success") 
   }
 
   async function handleSubmit(e) {
-    e.preventDefault();
+    e.preventDefault()
     setStatus("submitting");
 
     const headers = {
@@ -26,13 +25,17 @@ export function Register() {
           setError({ message: "choose another username" });
           setStatus("typing");
         }
-        else 
-        setStatus("success");
+        else {
+          console.log(resp.data) 
+          setStatus("success");
+        }
     
       })
       
     } catch (error) {
-      console.log("errror") 
+      setError("No message from server") 
+      setStatus("typing") 
+      throw error
     }
 
   }

@@ -1,16 +1,21 @@
-import { useState  } from "react";
-import { Navigate } from "react-router-dom";
-import {useAuth} from './useAuth'
-import axios from "./axios";
+import { useState  , useEffect , useRef  , useContext} from "react";
+import axios from "../api/axios";
+import { AuthContext } from "../context/AuthProvider";
 const LOGIN_URL = 'api/user/login/'
 export function Login() {
-  const { setAuth }  = useAuth() 
+  const {setAuth} = useContext(AuthContext)
+  const userRef = useRef() 
   const [User, setUser] = useState({ username: "", password: "" });
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("typing");
 
+  useEffect(()=>{
+    userRef.current.focus() ;
+  },[]) 
+
   if (status === "success") {
-    return <Navigate to="/dashboard" />;
+    console.log("fuckinn got it ")
+    setStatus("typing")
   }
 
   async function handleSubmit(e) {
@@ -21,7 +26,7 @@ export function Login() {
       'Content-Type': 'application/json',
     };
     try {
-      await axios.post(LOGIN_URL , User)
+      await axios.post(LOGIN_URL , User,headers) 
       .then(resp =>{
         if( 'error' in resp.data ){
           setError({ message: resp.data.error } ) ;
@@ -30,14 +35,17 @@ export function Login() {
         else{
           const accToken = resp.data.access 
           const refToken = resp.data.refresh 
-          setAuth({accToken , refToken}) 
+          setAuth({User , accToken , refToken})
+          console.log(accToken)
           setStatus("success");
         } 
       })
       
     } catch (error) {
+      if(!error?.response) {
+        setError("No message from server") 
+      }
       setStatus("typing") 
-      throw error 
     }
   }
 
@@ -60,6 +68,7 @@ export function Login() {
           value={User.username}
           onChange={handleTextareaChange}
           disabled={status === "submitting"}
+          ref = {userRef}
         />
         <br />
         <label htmlFor="pass">Password</label>
@@ -87,4 +96,3 @@ export function Login() {
     </>
   );
 }
-

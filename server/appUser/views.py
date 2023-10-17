@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from rest_framework import status , permissions , viewsets
 from appUser.renderers import UserRenderer
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
+
 from .models import User
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
@@ -15,10 +17,12 @@ def get_tokens_for_user(user):
         'access': str(refresh.access_token),
     }
 
+
 class AdminAPI(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    # permission_classes = [permissions.IsAdminUser] 
+    authentication_classes = [JWTTokenUserAuthentication]
+    permission_classes = [permissions.IsAuthenticated] 
 
 
 

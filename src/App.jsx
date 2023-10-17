@@ -6,6 +6,7 @@ import { Index } from "./pages/index";
 import { Oops } from "./pages/404";
 import { RequireAuth } from "./pages/RequireAuth";
 import { Routes, Route } from "react-router-dom";
+import { Users } from "./pages/Users";
 import "./App.css";
 
 export default function App() {
@@ -14,9 +15,10 @@ export default function App() {
       <Route path="/" element={<Layout />}>
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
+        <Route path="/" element={<Index />} />
 
         <Route element={<RequireAuth />}>
-          <Route path="/" element={<Index />} />
+          <Route path="users" element={<Users />} />
           <Route path="dashboard" element={<Dashboard />} />
         </Route>
 

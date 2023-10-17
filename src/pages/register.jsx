@@ -1,52 +1,46 @@
-import { useState  } from "react";
-import {Link , useNavigate ,useLocation} from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 
-import axios from '../api/axios';
-const API_URL  = 'api/user/register/' ;
+import axios from "../api/axios";
+const API_URL = "api/user/register/";
 
 export function Register() {
-  const {setAuth} = useAuth()
-  const navigate = useNavigate() 
-  const location = useLocation() 
-  const from = location.state?.from?.pathname || "/" ;
+  const { setAuth } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
 
-  const [User, setUser] = useState({ username: "", password: ""  , email:""});
+  const [User, setUser] = useState({ username: "", password: "", email: "" });
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("typing");
 
-
   async function handleSubmit(e) {
-    e.preventDefault()
+    e.preventDefault();
     setStatus("submitting");
 
     const headers = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
     try {
-      await axios.post(API_URL , User)
-      .then(resp =>{
-        if( 'error' in resp.data ){
+      await axios.post(API_URL, User).then((resp) => {
+        if ("error" in resp.data) {
           setError({ message: "choose another username" });
           setStatus("typing");
+        } else {
+          console.log(resp.data);
+          const accToken = resp.data.access;
+          const refToken = resp.data.refresh;
+          setAuth({ User, access: accToken, refresh: refToken });
+          // console.log(User)
+          navigate(from, { replace: true });
         }
-        else {
-          console.log(resp.data) 
-          const accToken = resp.data.access 
-          const refToken = resp.data.refresh 
-          setAuth({User , accToken , refToken})
-          console.log(User) 
-          navigate(from , {replace:true}) 
-        }
-    
-      })
-      
+      });
     } catch (error) {
-      setError("No message from server") 
-      setStatus("typing") 
-      throw error
+      setError("No message from server");
+      setStatus("typing");
+      throw error;
     }
-
   }
 
   function handleChange(e) {
@@ -64,7 +58,7 @@ export function Register() {
         <input
           type="text"
           name="username"
-          id = "usr"
+          id="usr"
           value={User.username}
           onChange={handleChange}
           disabled={status === "submitting"}
@@ -74,7 +68,7 @@ export function Register() {
         <input
           type="text"
           name="email"
-          id = "mail"
+          id="mail"
           value={User.email}
           onChange={handleChange}
           disabled={status === "submitting"}
@@ -84,7 +78,7 @@ export function Register() {
         <input
           type="password"
           name="password"
-          id = "pass"
+          id="pass"
           value={User.password}
           onChange={handleChange}
           disabled={status === "submitting"}
@@ -100,7 +94,6 @@ export function Register() {
           Submit
         </button>
         {error !== null && <p className="Error">{error.message}</p>}
-
       </form>
     </>
   );

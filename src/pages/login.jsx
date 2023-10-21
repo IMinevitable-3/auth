@@ -90,6 +90,8 @@ export function Login() {
         </button>
         {error !== null && <p className="Error">{error.message}</p>}
       </form>
+      <Link to="/register">Not Registered ?</Link>
+
     </>
   );
 }

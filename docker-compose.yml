@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  react-app:
+    build:
+      context: ./  # Path to the context, assuming Dockerfile.react is in the root
+      dockerfile: Dockerfile.react
+    ports:
+      - "5135:5135"
+    volumes:
+      - ./usr/src/app  # Assuming your React app code is in the 'client' directory
+
+  django-server:
+    build:
+      context: ./  # Path to the context, assuming Dockerfile.django is in the root
+      dockerfile: Dockerfile.django
+    ports:
+      - "8000:8000"
+    depends_on:
+      - react-app
+    volumes:
+      - ./server:/usr/src/app  # Assuming your Django server code is in the 'server' directory
+    environment:
+      - DJANGO_DB_ENGINE=django.db.backends.sqlite3
+      - DJANGO_DB_NAME=mydatabase

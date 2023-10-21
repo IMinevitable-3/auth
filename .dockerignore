@@ -1,0 +1,8 @@
+node_modules
+env
+*.log
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
+ignore.txt

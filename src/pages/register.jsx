@@ -31,7 +31,7 @@ export function Register() {
           console.log(resp.data);
           const accToken = resp.data.access;
           const refToken = resp.data.refresh;
-          setAuth({ User, access: accToken, refresh: refToken });
+          // setAuth({ User, access: accToken, refresh: refToken });
           // console.log(User)
           navigate(from, { replace: true });
         }
